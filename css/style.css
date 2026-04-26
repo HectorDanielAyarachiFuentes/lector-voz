@@ -716,3 +716,61 @@
             line-height: 1.2;
         }
 
+        /* ─── Modo AAC exclusivo (pantalla completa) ─────────────── */
+
+        /* Desktop: los paneles laterales desaparecen,
+           la tarjeta ocupa las 3 columnas */
+        body.aac-active {
+            grid-template-columns: 1fr;
+        }
+
+        body.aac-active .side-panel,
+        body.aac-active .mobile-tab {
+            display: none !important;
+        }
+
+        body.aac-active .app-card {
+            max-width: 100%;
+            border-radius: 20px;
+        }
+
+        /* El grid de pictogramas tiene más columnas disponibles */
+        body.aac-active .kids-grid {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 18px;
+        }
+
+        body.aac-active .kids-grid-item img {
+            width: 90px;
+            height: 90px;
+        }
+
+        body.aac-active .kids-grid-item span {
+            font-size: 1rem;
+        }
+
+        /* Móvil: mismas reglas, cuadrícula de 3 columnas fijas */
+        @media (max-width: 950px) {
+            body.aac-active {
+                display: block;
+            }
+
+            body.aac-active .app-card {
+                width: 100%;
+                height: 100dvh;
+                border-radius: 0;
+                padding: 15px !important;
+            }
+
+            body.aac-active .kids-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+
+            body.aac-active .kids-grid-item img {
+                width: 65px;
+                height: 65px;
+            }
+        }
+
+

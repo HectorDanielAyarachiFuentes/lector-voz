@@ -1,6 +1,6 @@
 // =============================================================
-// aac.js — Módulo Modo Niños (Pictogramas AAC)
-// Comunicación Aumentativa y Alternativa para VozInteractiva Pro
+// aac.js — Módulo Modo AAC (Comunicación Aumentativa y Alternativa)
+// Pictogramas interactivos para personas con necesidades comunicativas.
 // Depende de: speak() y textInput definidos en app.js
 // =============================================================
 
@@ -61,26 +61,46 @@ const kidsItems = [
     { text: "Mal",          img: "mal.jpg",         emoji: "😞", color: "#ffebee" }
 ];
 
-/* ─── Toggle entre Modo Clásico y Modo Niños ─────────────────── */
+/* ─── Toggle entre Modo Clásico y Modo AAC ──────────────────── */
 function toggleKidsMode() {
     kidsModeActive = !kidsModeActive;
 
-    const toggleBtn       = document.getElementById('kids-mode-toggle');
+    const toggleBtn        = document.getElementById('kids-mode-toggle');
     const classicContainer = document.getElementById('classic-mode-container');
-    const kidsContainer   = document.getElementById('kids-mode-container');
+    const kidsContainer    = document.getElementById('kids-mode-container');
 
     if (kidsModeActive) {
+        // ── Activar Modo AAC exclusivo ──────────────────────────
+        toggleBtn.innerHTML = '<i class="fas fa-comment-dots"></i> Modo Voz';
         toggleBtn.classList.add('active');
+        toggleBtn.title = 'Volver al Modo Voz';
+
+        // Ocultar modo clásico y mostrar cuadrícula AAC
         classicContainer.style.display = 'none';
         kidsContainer.style.display    = 'block';
-        // Renderizar solo la primera vez
+
+        // Renderizar la cuadrícula AAC solo la primera vez
         if (kidsContainer.children.length === 0) {
             renderKidsGrid();
         }
+
+        // Expandir a pantalla completa: ocultar paneles laterales
+        document.body.classList.add('aac-active');
+
+        // Cerrar paneles off-canvas si estaban abiertos en móvil
+        if (typeof closeAllPanels === 'function') closeAllPanels();
+
     } else {
+        // ── Volver al Modo Voz clásico ─────────────────────────
+        toggleBtn.innerHTML = '<i class="fas fa-th"></i> Modo AAC';
         toggleBtn.classList.remove('active');
+        toggleBtn.title = 'Cambiar a Modo AAC (Comunicación Aumentativa y Alternativa)';
+
         classicContainer.style.display = 'block';
         kidsContainer.style.display    = 'none';
+
+        // Restaurar paneles laterales
+        document.body.classList.remove('aac-active');
     }
 }
 

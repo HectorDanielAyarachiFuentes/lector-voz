@@ -7,7 +7,7 @@
 //   voice.js      → Síntesis de voz, puntuación, visualizador
 //   history.js    → Historial de mensajes
 //   predefined.js → Mensajes predefinidos y modo edición
-//   aac.js        → Modo Niños (Pictogramas AAC)
+//   aac.js        → Modo AAC (Comunicación Aumentativa y Alternativa)
 // =============================================================
 
 'use strict';
