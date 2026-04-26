@@ -21,7 +21,7 @@
         <i class="fas fa-list-ul"></i>
         <i class="fas fa-chevron-right" style="font-size: 0.8rem; margin-left: 5px; opacity: 0.7;"></i>
     </div>
-    
+
     <div class="mobile-tab right-tab" onclick="toggleMobilePanel('right')">
         <i class="fas fa-chevron-left" style="font-size: 0.8rem; margin-right: 5px; opacity: 0.7;"></i>
         <i class="fas fa-history"></i>
@@ -31,16 +31,19 @@
         <h2 style="display: flex; justify-content: space-between; align-items: center;">
             <span><i class="fas fa-list-ul"></i> Predefinidos</span>
             <div class="header-actions">
-                <button class="header-btn add-btn" onclick="openAddModal()" title="Agregar nuevo mensaje"><i class="fas fa-plus"></i></button>
-                <button id="edit-mode-btn" class="header-btn" onclick="toggleEditMode()" title="Editar mensajes"><i class="fas fa-edit"></i></button>
+                <button class="header-btn add-btn" onclick="openAddModal()" title="Agregar nuevo mensaje"><i
+                        class="fas fa-plus"></i></button>
+                <button id="edit-mode-btn" class="header-btn" onclick="toggleEditMode()" title="Editar mensajes"><i
+                        class="fas fa-edit"></i></button>
             </div>
         </h2>
         <div id="predefined-list" style="flex: 1;"></div>
-        
+
         <!-- Perfil de GitHub -->
-        <a href="https://github.com/HectorDanielAyarachiFuentes" target="_blank" class="github-profile" title="Visitar mi GitHub">
+        <a href="https://github.com/HectorDanielAyarachiFuentes" target="_blank" class="github-profile"
+            title="Visitar mi GitHub">
             <img src="./Img/Dulce%203.jpg" alt="Perfil GitHub">
-            <span>By Hector Daniel</span>
+            <span>By Hector Daniel Ayarachi Fuentes </span>
         </a>
     </div>
 
@@ -49,7 +52,7 @@
 
         <div class="input-group">
             <textarea id="text-input" placeholder="Escribe aquí lo que quieres decir..."></textarea>
-            
+
             <div class="visualizer-container" id="visualizer">
                 <div class="bar"></div>
                 <div class="bar"></div>
@@ -59,9 +62,12 @@
             </div>
 
             <div class="punctuation-toolbar">
-                <button class="punct-btn" onclick="applyPunctuation('!')" title="Añadir Exclamación / Emoción"><span>¡ !</span> 😃</button>
-                <button class="punct-btn" onclick="applyPunctuation('?')" title="Añadir Pregunta / Duda"><span>¿ ?</span> 🤔</button>
-                <button class="punct-btn" onclick="applyPunctuation('...')" title="Añadir Pausa"><span>...</span> 😐</button>
+                <button class="punct-btn" onclick="applyPunctuation('!')" title="Añadir Exclamación / Emoción"><span>¡
+                        !</span> 😃</button>
+                <button class="punct-btn" onclick="applyPunctuation('?')" title="Añadir Pregunta / Duda"><span>¿
+                        ?</span> 🤔</button>
+                <button class="punct-btn" onclick="applyPunctuation('...')" title="Añadir Pausa"><span>...</span>
+                    😐</button>
             </div>
         </div>
 
@@ -98,7 +104,8 @@
         <div class="modal-card">
             <h3><i class="fas fa-plus-circle"></i> Nuevo Mensaje</h3>
             <p>Escribe el mensaje que usarás frecuentemente.</p>
-            <input type="text" id="new-predefined-input" placeholder="E.g. ¿Dónde está el baño?" onkeypress="if(event.key === 'Enter') { addPredefined(); }">
+            <input type="text" id="new-predefined-input" placeholder="E.g. ¿Dónde está el baño?"
+                onkeypress="if(event.key === 'Enter') { addPredefined(); }">
             <div class="modal-buttons">
                 <button class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
                 <button class="btn-save" onclick="addPredefined()">Añadir</button>
