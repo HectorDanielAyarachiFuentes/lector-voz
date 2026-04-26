@@ -287,6 +287,36 @@
             border-color: #ff5f6d;
         }
 
+        /* --- Perfil GitHub --- */
+        .github-profile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #eef2f7;
+            text-decoration: none;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .github-profile:hover {
+            color: #2193b0;
+            transform: translateY(-2px);
+        }
+
+        .github-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #2193b0;
+            box-shadow: 0 4px 10px rgba(33, 147, 176, 0.2);
+        }
+
         /* --- Modal Styles --- */
         .modal-overlay {
             display: none;
