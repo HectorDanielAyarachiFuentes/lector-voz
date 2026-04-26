@@ -34,29 +34,31 @@
             body {
                 display: block;
                 overflow: hidden;
-                padding: 15px;
+                padding: 0; /* Quitar padding para evitar desborde horizontal */
             }
 
             .app-card { 
                 width: 100%;
-                height: calc(100vh - 30px);
+                height: 100dvh; /* dvh evita que la barra de direcciones del móvil tape cosas */
                 max-width: 100%;
                 margin: 0; 
-                padding: 20px !important;
+                padding: 20px 15px !important;
+                border-radius: 0; /* Diseño a pantalla completa en móvil */
             }
 
             /* Off-canvas panels */
             .side-panel {
                 position: fixed;
                 top: 0;
+                bottom: 0; /* Anclado arriba y abajo */
                 width: 85%;
                 max-width: 320px;
-                height: 100vh !important;
+                height: auto !important; /* Determinado por top y bottom */
                 border-radius: 0;
                 z-index: 1000;
                 transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                padding-top: 30px;
-                padding-bottom: 30px;
+                padding: 30px 15px; /* Asegurar padding lateral */
+                padding-bottom: calc(30px + env(safe-area-inset-bottom)); /* Prevenir corte por barra de home de iOS/Android */
             }
 
             .left-panel {
@@ -101,8 +103,7 @@
             .mobile-tab {
                 display: flex;
                 position: fixed;
-                top: 50vh;
-                transform: translateY(-50%);
+                bottom: calc(20px + env(safe-area-inset-bottom, 0px));
                 background: var(--primary-gradient);
                 color: white;
                 width: 60px;
@@ -131,7 +132,7 @@
             .overlay.active ~ .mobile-tab {
                 opacity: 0;
                 pointer-events: none;
-                transform: translateY(-50%) scale(0.8);
+                transform: scale(0.8);
             }
         }
 
