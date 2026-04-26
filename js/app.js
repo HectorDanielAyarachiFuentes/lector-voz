@@ -1,18 +1,20 @@
-﻿        const synth = window.speechSynthesis;
+        const synth = window.speechSynthesis;
         const textInput = document.getElementById('text-input');
         const voiceSelect = document.getElementById('voice-select');
         const rateInput = document.getElementById('rate');
 
         let voices = [];
+        let totalSentencesToSpeak = 0;
+        let sentencesFinished = 0;
 
         function loadVoices() {
             voices = synth.getVoices();
             voiceSelect.innerHTML = '';
 
-            // Filtramos para mostrar voces en espaÃ±ol primero
+            // Filtramos para mostrar voces en español primero
             let spanishVoices = voices.filter(v => v.lang.includes('es'));
 
-            // Priorizar voces Naturales, Online o de Google (suelen ser neuronales y mucho mÃ¡s expresivas)
+            // Priorizar voces Naturales, Online o de Google (suelen ser neuronales y mucho más expresivas)
             spanishVoices.sort((a, b) => {
                 const aName = a.name.toLowerCase();
                 const bName = b.name.toLowerCase();
@@ -26,9 +28,9 @@
             spanishVoices.forEach(voice => {
                 const option = document.createElement('option');
                 
-                // AÃ±adir un indicador visual a las mejores voces
+                // Añadir un indicador visual a las mejores voces
                 const isPremium = voice.name.toLowerCase().match(/natural|online|google|premium/);
-                const star = isPremium ? "â­ " : "";
+                const star = isPremium ? "⭐ " : "";
                 
                 option.textContent = `${star}${voice.name.replace('Microsoft', '').split(' - ')[0]} (${voice.lang})`;
                 option.value = voice.name;
@@ -37,7 +39,7 @@
 
             if (spanishVoices.length === 0) {
                 const option = document.createElement('option');
-                option.textContent = "No se hallaron voces en espaÃ±ol";
+                option.textContent = "No se hallaron voces en español";
                 voiceSelect.appendChild(option);
             }
         }
@@ -49,14 +51,22 @@
         }
 
         function speak() {
-            if (synth.speaking) { synth.cancel(); } // Si ya estÃ¡ hablando, reinicia
+            const visualizer = document.getElementById('visualizer');
+            
+            if (synth.speaking) { 
+                synth.cancel(); 
+                if (visualizer) visualizer.classList.remove('active');
+                totalSentencesToSpeak = 0;
+                sentencesFinished = 0;
+            }
+            
             const fullText = textInput.value.trim();
             
             if (fullText !== '') {
                 const selectedVoice = voices.find(v => v.name === voiceSelect.value);
                 const baseRate = parseFloat(rateInput.value);
                 
-                // Dividir el texto en oraciones conservando los signos de puntuaciÃ³n
+                // Dividir el texto en oraciones conservando los signos de puntuación
                 const sentences = fullText.match(/[^.!?]+[.!?]*/g) || [fullText];
                 
                 sentences.forEach(sentence => {
@@ -69,29 +79,46 @@
                     let currentPitch = 1;
                     let currentRate = baseRate;
                     
-                    // Modificar drÃ¡sticamente tono y velocidad para simular viveza
-                    if (text.includes('!') || text.includes('Â¡')) {
+                    // Modificar drásticamente tono y velocidad para simular viveza
+                    if (text.includes('!') || text.includes('¡')) {
                         currentPitch = 1.8; // Muy agudo y emocionado
-                        currentRate = Math.min(baseRate * 1.25, 2); // Bastante mÃ¡s rÃ¡pido
-                    } else if (text.includes('?') || text.includes('Â¿')) {
+                        currentRate = Math.min(baseRate * 1.25, 2); // Bastante más rápido
+                    } else if (text.includes('?') || text.includes('¿')) {
                         currentPitch = 1.5; // Agudo inquisitivo
-                        currentRate = Math.max(baseRate * 0.9, 0.5); // Ligeramente mÃ¡s pausado
+                        currentRate = Math.max(baseRate * 0.9, 0.5); // Ligeramente más pausado
                     } else if (text.includes('...')) {
                         currentPitch = 0.6; // Grave y misterioso
                         currentRate = Math.max(baseRate * 0.6, 0.5); // Muy lento
                     } else {
-                        // Ligera variaciÃ³n natural para que cada frase suene un poco distinta y no tan robÃ³tica
+                        // Ligera variación natural para que cada frase suene un poco distinta y no tan robótica
                         currentPitch = 1.0 + (Math.random() * 0.1 - 0.05);
                     }
                     
-                    // Si el texto estÃ¡ completamente en MAYÃšSCULAS (simulando un grito)
-                    if (text === text.toUpperCase() && text.match(/[A-ZÃÃ‰ÃÃ“Ãš]/)) {
+                    // Si el texto está completamente en MAYÚSCULAS (simulando un grito)
+                    if (text === text.toUpperCase() && text.match(/[A-ZÁÉÍÓÚ]/)) {
                         currentPitch = 1.7;
                         currentRate = Math.min(baseRate * 1.3, 2);
                     }
                     
                     utterance.pitch = currentPitch;
                     utterance.rate = currentRate;
+                    
+                    totalSentencesToSpeak++;
+                    
+                    utterance.onstart = () => {
+                        if (visualizer) visualizer.classList.add('active');
+                    };
+                    
+                    utterance.onend = () => {
+                        sentencesFinished++;
+                        if (sentencesFinished >= totalSentencesToSpeak) {
+                            if (visualizer) visualizer.classList.remove('active');
+                            totalSentencesToSpeak = 0;
+                            sentencesFinished = 0;
+                        }
+                    };
+                    
+                    utterance.onerror = utterance.onend;
                     
                     synth.speak(utterance);
                 });
@@ -103,6 +130,10 @@
         function clearText() {
             textInput.value = '';
             synth.cancel();
+            const visualizer = document.getElementById('visualizer');
+            if (visualizer) visualizer.classList.remove('active');
+            totalSentencesToSpeak = 0;
+            sentencesFinished = 0;
         }
 
         function applyPunctuation(type) {
@@ -122,14 +153,14 @@
 
             const selectedText = text.substring(start, end);
             
-            // Limpiamos la puntuaciÃ³n que ya tenga a los lados para no duplicar (ej: Â¡Â¡Hola!!)
-            let cleanText = selectedText.replace(/^[Â¡Â¿]+|[!?.]+$/g, '').trim();
+            // Limpiamos la puntuación que ya tenga a los lados para no duplicar (ej: ¡¡Hola!!)
+            let cleanText = selectedText.replace(/^[¡¿]+|[!?.]+$/g, '').trim();
 
             let newText = '';
             if (type === '!') {
-                newText = `Â¡${cleanText}!`;
+                newText = `¡${cleanText}!`;
             } else if (type === '?') {
-                newText = `Â¿${cleanText}?`;
+                newText = `¿${cleanText}?`;
             } else if (type === '...') {
                 newText = `${cleanText}...`;
             }
@@ -163,7 +194,7 @@
 
         function renderHistory() {
             if (messageHistory.length === 0) {
-                historyList.innerHTML = '<div class="empty-history">AÃºn no hay mensajes.</div>';
+                historyList.innerHTML = '<div class="empty-history">Aún no hay mensajes.</div>';
                 return;
             }
 
@@ -182,19 +213,19 @@
 
         // --- Mensajes Predefinidos ---
         const defaultMessages = [
-            "Hola, Â¿cÃ³mo estÃ¡s?",
+            "Hola, ¿cómo estás?",
             "Muchas gracias",
             "Por favor",
-            "SÃ­",
+            "Sí",
             "No",
             "No entiendo",
-            "Â¿Me puedes ayudar?",
-            "Buenos dÃ­as",
+            "¿Me puedes ayudar?",
+            "Buenos días",
             "Buenas tardes",
             "Buenas noches",
-            "AdiÃ³s, hasta luego",
-            "Me llamo RamÃ³n",
-            "Necesito ir al baÃ±o",
+            "Adiós, hasta luego",
+            "Me llamo Ramón",
+            "Necesito ir al baño",
             "Tengo hambre",
             "Tengo sed",
             "Me duele"
@@ -220,7 +251,7 @@
                 panel.classList.add('edit-mode');
                 btn.classList.add('active');
                 btn.innerHTML = '<i class="fas fa-check"></i>';
-                btn.title = "Terminar ediciÃ³n";
+                btn.title = "Terminar edición";
             } else {
                 panel.classList.remove('edit-mode');
                 btn.classList.remove('active');
@@ -290,7 +321,7 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
                     .then(registration => {
-                        console.log('ServiceWorker registrado con Ã©xito: ', registration.scope);
+                        console.log('ServiceWorker registrado con éxito: ', registration.scope);
                     })
                     .catch(error => {
                         console.log('Fallo al registrar el ServiceWorker: ', error);
