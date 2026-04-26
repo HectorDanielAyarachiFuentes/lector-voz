@@ -1,452 +1,84 @@
-        const synth = window.speechSynthesis;
-        const textInput = document.getElementById('text-input');
-        const voiceSelect = document.getElementById('voice-select');
-        const rateInput = document.getElementById('rate');
+// =============================================================
+// app.js — Núcleo / Bootstrap de VozInteractiva Pro
+// Solo contiene: referencias al DOM compartidas, registro del
+//                Service Worker, paneles off-canvas y swipe móvil.
+//
+// Arquitectura modular:
+//   voice.js      → Síntesis de voz, puntuación, visualizador
+//   history.js    → Historial de mensajes
+//   predefined.js → Mensajes predefinidos y modo edición
+//   aac.js        → Modo Niños (Pictogramas AAC)
+// =============================================================
 
-        let voices = [];
-        let totalSentencesToSpeak = 0;
-        let sentencesFinished = 0;
+'use strict';
 
-        function loadVoices() {
-            voices = synth.getVoices();
-            voiceSelect.innerHTML = '';
+/* ─── Referencias al DOM compartidas por todos los módulos ────── */
+const textInput   = document.getElementById('text-input');
+const voiceSelect = document.getElementById('voice-select');
+const rateInput   = document.getElementById('rate');
 
-            // Filtramos para mostrar voces en español primero
-            let spanishVoices = voices.filter(v => v.lang.includes('es'));
+/* ─── Registro del Service Worker (soporte Offline / PWA) ────── */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg  => console.log('ServiceWorker registrado:', reg.scope))
+            .catch(err => console.log('Fallo al registrar SW:', err));
+    });
+}
 
-            // Priorizar voces Naturales, Online o de Google (suelen ser neuronales y mucho más expresivas)
-            spanishVoices.sort((a, b) => {
-                const aName = a.name.toLowerCase();
-                const bName = b.name.toLowerCase();
-                const aPremium = aName.includes('natural') || aName.includes('online') || aName.includes('google') || aName.includes('premium');
-                const bPremium = bName.includes('natural') || bName.includes('online') || bName.includes('google') || bName.includes('premium');
-                if (aPremium && !bPremium) return -1;
-                if (!aPremium && bPremium) return 1;
-                return 0;
-            });
+/* ─── Paneles off-canvas (móvil) ─────────────────────────────── */
+function toggleMobilePanel(side) {
+    const panel   = document.getElementById(side + '-panel');
+    const overlay = document.getElementById('overlay');
 
-            spanishVoices.forEach(voice => {
-                const option = document.createElement('option');
-                
-                // Añadir un indicador visual a las mejores voces
-                const isPremium = voice.name.toLowerCase().match(/natural|online|google|premium/);
-                const star = isPremium ? "⭐ " : "";
-                
-                option.textContent = `${star}${voice.name.replace('Microsoft', '').split(' - ')[0]} (${voice.lang})`;
-                option.value = voice.name;
-                voiceSelect.appendChild(option);
-            });
+    if (!panel.classList.contains('open')) {
+        closeAllPanels();
+        panel.classList.add('open');
+        overlay.classList.add('active');
+    } else {
+        closeAllPanels();
+    }
+}
 
-            if (spanishVoices.length === 0) {
-                const option = document.createElement('option');
-                option.textContent = "No se hallaron voces en español";
-                voiceSelect.appendChild(option);
-            }
+function closeAllPanels() {
+    document.getElementById('left-panel').classList.remove('open');
+    document.getElementById('right-panel').classList.remove('open');
+    document.getElementById('overlay').classList.remove('active');
+}
+
+/* ─── Soporte Swipe (deslizar en móviles) ────────────────────── */
+let touchstartX = 0;
+let touchendX   = 0;
+
+function checkDirection() {
+    const swipeThreshold = 50;
+
+    // Deslizó hacia la derecha → panel izquierdo (Predefinidos)
+    if (touchendX > touchstartX + swipeThreshold) {
+        if (document.getElementById('right-panel').classList.contains('open')) {
+            closeAllPanels();
+        } else if (!document.getElementById('left-panel').classList.contains('open')) {
+            toggleMobilePanel('left');
         }
+    }
 
-        // Inicializar voces
-        loadVoices();
-        if (speechSynthesis.onvoiceschanged !== undefined) {
-            speechSynthesis.onvoiceschanged = loadVoices;
+    // Deslizó hacia la izquierda → panel derecho (Historial)
+    if (touchendX < touchstartX - swipeThreshold) {
+        if (document.getElementById('left-panel').classList.contains('open')) {
+            closeAllPanels();
+        } else if (!document.getElementById('right-panel').classList.contains('open')) {
+            toggleMobilePanel('right');
         }
+    }
+}
 
-        function speak() {
-            const visualizer = document.getElementById('visualizer');
-            
-            if (synth.speaking) { 
-                synth.cancel(); 
-                if (visualizer) visualizer.classList.remove('active');
-                totalSentencesToSpeak = 0;
-                sentencesFinished = 0;
-            }
-            
-            const fullText = textInput.value.trim();
-            
-            if (fullText !== '') {
-                const selectedVoice = voices.find(v => v.name === voiceSelect.value);
-                const baseRate = parseFloat(rateInput.value);
-                
-                // Dividir el texto en oraciones conservando los signos de puntuación
-                const sentences = fullText.match(/[^.!?]+[.!?]*/g) || [fullText];
-                
-                sentences.forEach(sentence => {
-                    const text = sentence.trim();
-                    if (!text) return;
-                    
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    utterance.voice = selectedVoice;
-                    
-                    let currentPitch = 1;
-                    let currentRate = baseRate;
-                    
-                    // Modificar drásticamente tono y velocidad para simular viveza
-                    if (text.includes('!') || text.includes('¡')) {
-                        currentPitch = 1.8; // Muy agudo y emocionado
-                        currentRate = Math.min(baseRate * 1.25, 2); // Bastante más rápido
-                    } else if (text.includes('?') || text.includes('¿')) {
-                        currentPitch = 1.5; // Agudo inquisitivo
-                        currentRate = Math.max(baseRate * 0.9, 0.5); // Ligeramente más pausado
-                    } else if (text.includes('...')) {
-                        currentPitch = 0.6; // Grave y misterioso
-                        currentRate = Math.max(baseRate * 0.6, 0.5); // Muy lento
-                    } else {
-                        // Ligera variación natural para que cada frase suene un poco distinta y no tan robótica
-                        currentPitch = 1.0 + (Math.random() * 0.1 - 0.05);
-                    }
-                    
-                    // Si el texto está completamente en MAYÚSCULAS (simulando un grito)
-                    if (text === text.toUpperCase() && text.match(/[A-ZÁÉÍÓÚ]/)) {
-                        currentPitch = 1.7;
-                        currentRate = Math.min(baseRate * 1.3, 2);
-                    }
-                    
-                    utterance.pitch = currentPitch;
-                    utterance.rate = currentRate;
-                    
-                    totalSentencesToSpeak++;
-                    
-                    utterance.onstart = () => {
-                        if (visualizer) visualizer.classList.add('active');
-                    };
-                    
-                    utterance.onend = () => {
-                        sentencesFinished++;
-                        if (sentencesFinished >= totalSentencesToSpeak) {
-                            if (visualizer) visualizer.classList.remove('active');
-                            totalSentencesToSpeak = 0;
-                            sentencesFinished = 0;
-                            document.querySelectorAll('.active-speaking').forEach(b => b.classList.remove('active-speaking'));
-                        }
-                    };
-                    
-                    utterance.onerror = utterance.onend;
-                    
-                    synth.speak(utterance);
-                });
-                
-                addToHistory(fullText);
-            }
-        }
+document.addEventListener('touchstart', e => {
+    if (e.target.tagName.toLowerCase() === 'input' && e.target.type === 'range') return;
+    touchstartX = e.changedTouches[0].screenX;
+});
 
-        function clearText() {
-            textInput.value = '';
-            synth.cancel();
-            const visualizer = document.getElementById('visualizer');
-            if (visualizer) visualizer.classList.remove('active');
-            totalSentencesToSpeak = 0;
-            sentencesFinished = 0;
-            document.querySelectorAll('.active-speaking').forEach(b => b.classList.remove('active-speaking'));
-        }
-
-        function applyPunctuation(type) {
-            const ta = document.getElementById('text-input');
-            let start = ta.selectionStart;
-            let end = ta.selectionEnd;
-            let text = ta.value;
-
-            // Si no hay texto, no hacemos nada
-            if (text.trim() === '') return;
-
-            // Si no hay texto seleccionado, seleccionamos todo
-            if (start === end) {
-                start = 0;
-                end = text.length;
-            }
-
-            const selectedText = text.substring(start, end);
-            
-            // Limpiamos la puntuación que ya tenga a los lados para no duplicar (ej: ¡¡Hola!!)
-            let cleanText = selectedText.replace(/^[¡¿]+|[!?.]+$/g, '').trim();
-
-            let newText = '';
-            if (type === '!') {
-                newText = `¡${cleanText}!`;
-            } else if (type === '?') {
-                newText = `¿${cleanText}?`;
-            } else if (type === '...') {
-                newText = `${cleanText}...`;
-            }
-
-            ta.value = text.substring(0, start) + newText + text.substring(end);
-            
-            // Devolver el foco al textarea
-            ta.focus();
-        }
-
-        // Evento de teclado
-        textInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                speak();
-            }
-        });
-
-        // --- Funciones del Historial ---
-        const historyList = document.getElementById('history-list');
-        let messageHistory = [];
-
-        function addToHistory(text) {
-            if (messageHistory.length > 0 && messageHistory[0].text === text) return; // Evitar duplicados consecutivos
-            
-            const now = new Date();
-            const dateStr = now.toLocaleDateString();
-            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            messageHistory.unshift({ text, date: dateStr, time: timeStr });
-            if (messageHistory.length > 30) messageHistory.pop(); // Limitar a 30
-            
-            renderHistory();
-        }
-
-        function renderHistory() {
-            if (messageHistory.length === 0) {
-                historyList.innerHTML = '<div class="empty-history">Aún no hay mensajes.</div>';
-                return;
-            }
-
-            historyList.innerHTML = '';
-            messageHistory.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'history-item';
-                div.title = "Haz clic para reproducir";
-                
-                const infoP = document.createElement('div');
-                infoP.style.fontSize = '0.75rem';
-                infoP.style.color = '#7f8c8d';
-                infoP.style.marginBottom = '6px';
-                infoP.style.lineHeight = '1.3';
-                infoP.innerHTML = `<i class="far fa-clock"></i> Este mensaje fue dicho el ${item.date} a las ${item.time} y esto se dijo:`;
-                
-                const textContainer = document.createElement('div');
-                textContainer.style.display = 'flex';
-                textContainer.style.alignItems = 'center';
-                textContainer.style.justifyContent = 'space-between';
-                textContainer.style.gap = '10px';
-                
-                const textSpan = document.createElement('span');
-                textSpan.textContent = `"${item.text}"`;
-                textSpan.style.fontWeight = 'bold';
-                textSpan.style.color = 'var(--text-main)';
-                textSpan.style.wordBreak = 'break-word';
-                
-                const playIcon = document.createElement('i');
-                playIcon.className = 'fas fa-volume-up';
-                playIcon.style.color = '#2193b0';
-                playIcon.style.opacity = '0.8';
-                
-                textContainer.appendChild(textSpan);
-                textContainer.appendChild(playIcon);
-                
-                div.appendChild(infoP);
-                div.appendChild(textContainer);
-
-                div.onclick = () => {
-                    textInput.value = item.text;
-                    document.querySelectorAll('.active-speaking').forEach(b => b.classList.remove('active-speaking'));
-                    div.classList.add('active-speaking');
-                    speak();
-                };
-                historyList.appendChild(div);
-            });
-        }
-
-        // --- Mensajes Predefinidos ---
-        const defaultMessages = [
-            "Hola, ¿cómo estás?",
-            "Muchas gracias",
-            "Por favor",
-            "Sí",
-            "No",
-            "No entiendo",
-            "¿Me puedes ayudar?",
-            "Buenos días",
-            "Buenas tardes",
-            "Buenas noches",
-            "Adiós, hasta luego",
-            "Me llamo Ramón",
-            "Necesito ir al baño",
-            "Tengo hambre",
-            "Tengo sed",
-            "Me duele"
-        ];
-
-        let predefinedMessages = [];
-        const storedMessages = localStorage.getItem('predefinedMessages');
-        if (storedMessages) {
-            predefinedMessages = JSON.parse(storedMessages);
-        } else {
-            predefinedMessages = [...defaultMessages];
-        }
-
-        const predefinedList = document.getElementById('predefined-list');
-        let isEditMode = false;
-        
-        function toggleEditMode() {
-            isEditMode = !isEditMode;
-            const panel = document.getElementById('left-panel');
-            const btn = document.getElementById('edit-mode-btn');
-            
-            if (isEditMode) {
-                panel.classList.add('edit-mode');
-                btn.classList.add('active');
-                btn.innerHTML = '<i class="fas fa-check"></i>';
-                btn.title = "Terminar edición";
-            } else {
-                panel.classList.remove('edit-mode');
-                btn.classList.remove('active');
-                btn.innerHTML = '<i class="fas fa-edit"></i>';
-                btn.title = "Editar mensajes";
-            }
-        }
-        
-        function renderPredefined() {
-            predefinedList.innerHTML = '';
-            predefinedMessages.forEach((msg, index) => {
-                const btnContainer = document.createElement('div');
-                btnContainer.style.display = 'flex';
-                btnContainer.style.gap = '8px';
-                btnContainer.style.marginBottom = '10px';
-                btnContainer.style.alignItems = 'stretch';
-
-                const btn = document.createElement('button');
-                btn.className = 'message-btn';
-                btn.style.flex = '1';
-                btn.style.marginBottom = '0';
-                btn.textContent = msg;
-                btn.onclick = () => {
-                    textInput.value = msg;
-                    document.querySelectorAll('.active-speaking').forEach(b => b.classList.remove('active-speaking'));
-                    btn.classList.add('active-speaking');
-                    speak(); 
-                };
-
-                const deleteBtn = document.createElement('button');
-                deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
-                deleteBtn.className = 'delete-btn';
-                deleteBtn.title = "Eliminar mensaje";
-                deleteBtn.onclick = () => removePredefined(index);
-
-                btnContainer.appendChild(btn);
-                btnContainer.appendChild(deleteBtn);
-                predefinedList.appendChild(btnContainer);
-            });
-            localStorage.setItem('predefinedMessages', JSON.stringify(predefinedMessages));
-        }
-
-        function addPredefined() {
-            const input = document.getElementById('new-predefined-input');
-            const val = input.value.trim();
-            if (val) {
-                predefinedMessages.push(val);
-                input.value = '';
-                renderPredefined();
-                closeAddModal();
-                
-                // Hacer scroll al fondo de la lista
-                setTimeout(() => {
-                    const list = document.getElementById('predefined-list');
-                    list.scrollTop = list.scrollHeight;
-                }, 100);
-            }
-        }
-
-        function openAddModal() {
-            document.getElementById('add-modal').classList.add('active');
-            setTimeout(() => {
-                document.getElementById('new-predefined-input').focus();
-            }, 100);
-        }
-
-        function closeAddModal() {
-            document.getElementById('add-modal').classList.remove('active');
-            document.getElementById('new-predefined-input').value = '';
-        }
-
-        function removePredefined(index) {
-            predefinedMessages.splice(index, 1);
-            renderPredefined();
-        }
-
-        document.getElementById('new-predefined-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                addPredefined();
-            }
-        });
-
-        renderPredefined();
-
-        // Registrar Service Worker para soporte Offline
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registrado con éxito: ', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('Fallo al registrar el ServiceWorker: ', error);
-                    });
-            });
-        }
-
-        // --- Funciones para los paneles en versión móvil ---
-        function toggleMobilePanel(side) {
-            const panel = document.getElementById(side + '-panel');
-            const overlay = document.getElementById('overlay');
-            
-            // Cerrar todos primero
-            if (!panel.classList.contains('open')) {
-                closeAllPanels();
-                panel.classList.add('open');
-                overlay.classList.add('active');
-            } else {
-                closeAllPanels();
-            }
-        }
-
-        function closeAllPanels() {
-            document.getElementById('left-panel').classList.remove('open');
-            document.getElementById('right-panel').classList.remove('open');
-            document.getElementById('overlay').classList.remove('active');
-        }
-
-        // --- Soporte para Swipe (Deslizar en Móviles) ---
-        let touchstartX = 0;
-        let touchendX = 0;
-
-        function checkDirection() {
-            const swipeThreshold = 50; // Distancia mínima para considerar que fue un deslizamiento
-            
-            // Deslizó hacia la derecha -> Abrir panel izquierdo (Predefinidos) o cerrar el derecho
-            if (touchendX > touchstartX + swipeThreshold) {
-                if (document.getElementById('right-panel').classList.contains('open')) {
-                    closeAllPanels();
-                } else if (!document.getElementById('left-panel').classList.contains('open')) {
-                    toggleMobilePanel('left');
-                }
-            }
-            
-            // Deslizó hacia la izquierda -> Abrir panel derecho (Historial) o cerrar el izquierdo
-            if (touchendX < touchstartX - swipeThreshold) {
-                if (document.getElementById('left-panel').classList.contains('open')) {
-                    closeAllPanels();
-                } else if (!document.getElementById('right-panel').classList.contains('open')) {
-                    toggleMobilePanel('right');
-                }
-            }
-        }
-
-        document.addEventListener('touchstart', e => {
-            // Ignorar gestos si el usuario está interactuando con el slider de velocidad
-            if(e.target.tagName.toLowerCase() === 'input' && e.target.type === 'range') return;
-            touchstartX = e.changedTouches[0].screenX;
-        });
-
-        document.addEventListener('touchend', e => {
-            if(e.target.tagName.toLowerCase() === 'input' && e.target.type === 'range') return;
-            touchendX = e.changedTouches[0].screenX;
-            // Solo activar swipe si estamos en vista móvil
-            if (window.innerWidth <= 950) {
-                checkDirection();
-            }
-        });
+document.addEventListener('touchend', e => {
+    if (e.target.tagName.toLowerCase() === 'input' && e.target.type === 'range') return;
+    touchendX = e.changedTouches[0].screenX;
+    if (window.innerWidth <= 950) checkDirection();
+});

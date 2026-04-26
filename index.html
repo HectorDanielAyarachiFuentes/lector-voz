@@ -64,48 +64,61 @@
     </div>
 
     <div class="app-card">
-        <h1><i class="fas fa-comment-dots"></i> Voz</h1>
-
-        <div class="input-group">
-            <textarea id="text-input" placeholder="Escribe aquí lo que quieres decir..."></textarea>
-
-            <div class="visualizer-container" id="visualizer">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-
-            <div class="punctuation-toolbar">
-                <button class="punct-btn" onclick="applyPunctuation('!')" title="Añadir Exclamación / Emoción"><span>¡
-                        !</span> 😃</button>
-                <button class="punct-btn" onclick="applyPunctuation('?')" title="Añadir Pregunta / Duda"><span>¿
-                        ?</span> 🤔</button>
-                <button class="punct-btn" onclick="applyPunctuation('...')" title="Añadir Pausa"><span>...</span>
-                    😐</button>
-            </div>
-        </div>
-
-        <button class="main-btn" onclick="speak()">
-            <i class="fas fa-volume-up"></i> Reproducir Voz
-        </button>
-
-        <div class="secondary-controls">
-            <button class="btn-clear" onclick="clearText()">
-                <i class="fas fa-trash-alt"></i> Borrar
+        <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h1 style="margin-bottom: 0;"><i class="fas fa-comment-dots"></i> Voz</h1>
+            <button id="kids-mode-toggle" class="kids-toggle-btn" onclick="toggleKidsMode()" title="Cambiar a Modo Niños">
+                <i class="fas fa-child"></i> Modo Niños
             </button>
-            <select id="voice-select">
-                <option value="">Cargando voces...</option>
-            </select>
         </div>
 
-        <div class="slider-container">
-            <label><i class="fas fa-tachometer-alt"></i> Velocidad de lectura</label>
-            <input type="range" id="rate" min="0.5" max="1.8" value="1" step="0.1">
+        <!-- CONTENEDOR MODO CLÁSICO -->
+        <div id="classic-mode-container">
+            <div class="input-group">
+                <textarea id="text-input" placeholder="Escribe aquí lo que quieres decir..."></textarea>
+
+                <div class="visualizer-container" id="visualizer">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                </div>
+
+                <div class="punctuation-toolbar">
+                    <button class="punct-btn" onclick="applyPunctuation('!')" title="Añadir Exclamación / Emoción"><span>¡
+                            !</span> 😃</button>
+                    <button class="punct-btn" onclick="applyPunctuation('?')" title="Añadir Pregunta / Duda"><span>¿
+                            ?</span> 🤔</button>
+                    <button class="punct-btn" onclick="applyPunctuation('...')" title="Añadir Pausa"><span>...</span>
+                        😐</button>
+                </div>
+            </div>
+
+            <button class="main-btn" onclick="speak()">
+                <i class="fas fa-volume-up"></i> Reproducir Voz
+            </button>
+
+            <div class="secondary-controls">
+                <button class="btn-clear" onclick="clearText()">
+                    <i class="fas fa-trash-alt"></i> Borrar
+                </button>
+                <select id="voice-select">
+                    <option value="">Cargando voces...</option>
+                </select>
+            </div>
+
+            <div class="slider-container">
+                <label><i class="fas fa-tachometer-alt"></i> Velocidad de lectura</label>
+                <input type="range" id="rate" min="0.5" max="1.8" value="1" step="0.1">
+            </div>
+
+            <p class="footer-info">Presiona Enter para hablar rápido</p>
         </div>
 
-        <p class="footer-info">Presiona Enter para hablar rápido</p>
+        <!-- CONTENEDOR MODO NIÑOS -->
+        <div id="kids-mode-container" style="display: none;">
+            <!-- La cuadrícula se generará dinámicamente desde app.js -->
+        </div>
     </div>
 
     <div class="side-panel right-panel" id="right-panel">
@@ -129,7 +142,13 @@
         </div>
     </div>
 
+    <!-- Bootstrap: DOM global + SW + paneles -->
     <script src="./js/app.js"></script>
+    <!-- Módulos (dependen de las refs de app.js) -->
+    <script src="./js/voice.js"></script>
+    <script src="./js/history.js"></script>
+    <script src="./js/predefined.js"></script>
+    <script src="./js/aac.js"></script>
 
 </body>
 
