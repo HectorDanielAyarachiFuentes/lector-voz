@@ -13,7 +13,13 @@
 
 <body>
 
+    <!-- Overlay para cuando un panel está abierto -->
+    <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
     <div class="side-panel left-panel" id="left-panel">
+        <div class="mobile-tab left-tab" onclick="toggleMobilePanel('left')">
+            <i class="fas fa-list-ul"></i>
+        </div>
         <h2>
             <i class="fas fa-list-ul"></i> Predefinidos
             <button id="edit-mode-btn" class="edit-mode-btn" onclick="toggleEditMode()" title="Editar mensajes"><i class="fas fa-edit"></i></button>
@@ -67,7 +73,10 @@
         <p class="footer-info">Presiona Enter para hablar rápido</p>
     </div>
 
-    <div class="side-panel right-panel">
+    <div class="side-panel right-panel" id="right-panel">
+        <div class="mobile-tab right-tab" onclick="toggleMobilePanel('right')">
+            <i class="fas fa-history"></i>
+        </div>
         <h2><i class="fas fa-history"></i> Historial</h2>
         <div id="history-list">
             <div class="empty-history">Aún no hay mensajes.</div>

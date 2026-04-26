@@ -328,3 +328,65 @@
                     });
             });
         }
+
+        // --- Funciones para los paneles en versión móvil ---
+        function toggleMobilePanel(side) {
+            const panel = document.getElementById(side + '-panel');
+            const overlay = document.getElementById('overlay');
+            
+            // Cerrar todos primero
+            if (!panel.classList.contains('open')) {
+                closeAllPanels();
+                panel.classList.add('open');
+                overlay.classList.add('active');
+            } else {
+                closeAllPanels();
+            }
+        }
+
+        function closeAllPanels() {
+            document.getElementById('left-panel').classList.remove('open');
+            document.getElementById('right-panel').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        // --- Soporte para Swipe (Deslizar en Móviles) ---
+        let touchstartX = 0;
+        let touchendX = 0;
+
+        function checkDirection() {
+            const swipeThreshold = 50; // Distancia mínima para considerar que fue un deslizamiento
+            
+            // Deslizó hacia la derecha -> Abrir panel izquierdo (Predefinidos) o cerrar el derecho
+            if (touchendX > touchstartX + swipeThreshold) {
+                if (document.getElementById('right-panel').classList.contains('open')) {
+                    closeAllPanels();
+                } else if (!document.getElementById('left-panel').classList.contains('open')) {
+                    toggleMobilePanel('left');
+                }
+            }
+            
+            // Deslizó hacia la izquierda -> Abrir panel derecho (Historial) o cerrar el izquierdo
+            if (touchendX < touchstartX - swipeThreshold) {
+                if (document.getElementById('left-panel').classList.contains('open')) {
+                    closeAllPanels();
+                } else if (!document.getElementById('right-panel').classList.contains('open')) {
+                    toggleMobilePanel('right');
+                }
+            }
+        }
+
+        document.addEventListener('touchstart', e => {
+            // Ignorar gestos si el usuario está interactuando con el slider de velocidad
+            if(e.target.tagName.toLowerCase() === 'input' && e.target.type === 'range') return;
+            touchstartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            if(e.target.tagName.toLowerCase() === 'input' && e.target.type === 'range') return;
+            touchendX = e.changedTouches[0].screenX;
+            // Solo activar swipe si estamos en vista móvil
+            if (window.innerWidth <= 950) {
+                checkDirection();
+            }
+        });

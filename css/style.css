@@ -12,47 +12,161 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             display: grid;
-            grid-template-columns: 280px 1fr 280px;
-            gap: 20px;
-            align-items: center;
-            min-height: 100vh;
+            grid-template-columns: 250px 1fr 250px;
+            gap: 15px;
+            align-items: stretch;
+            height: 100vh;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             box-sizing: border-box;
+            overflow: hidden; /* Evitar scroll global en desktop */
+        }
+
+        .mobile-tab {
+            display: none;
+        }
+        
+        .overlay {
+            display: none;
         }
 
         @media (max-width: 950px) {
             body {
-                grid-template-columns: 1fr;
-                align-items: start;
+                display: block;
+                overflow: hidden;
+                padding: 15px;
             }
-            .left-panel { order: 2; height: 300px !important; }
-            .app-card { order: 1; margin-bottom: 20px; }
-            .right-panel { order: 3; height: 300px !important; }
+
+            .app-card { 
+                width: 100%;
+                height: calc(100vh - 30px);
+                max-width: 100%;
+                margin: 0; 
+                padding: 20px !important;
+            }
+
+            /* Off-canvas panels */
+            .side-panel {
+                position: fixed;
+                top: 0;
+                width: 85%;
+                max-width: 320px;
+                height: 100vh !important;
+                border-radius: 0;
+                z-index: 1000;
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                padding-top: 30px;
+                padding-bottom: 30px;
+            }
+
+            .left-panel {
+                left: 0;
+                transform: translateX(-100%);
+            }
+            .left-panel.open {
+                transform: translateX(0);
+                box-shadow: 10px 0 30px rgba(0,0,0,0.2);
+            }
+
+            .right-panel {
+                right: 0;
+                transform: translateX(100%);
+            }
+            .right-panel.open {
+                transform: translateX(0);
+                box-shadow: -10px 0 30px rgba(0,0,0,0.2);
+            }
+
+            /* Overlay background */
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0,0,0,0.4);
+                backdrop-filter: blur(2px);
+                z-index: 999;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s;
+            }
+            .overlay.active {
+                display: block;
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            /* Mobile Tabs (attached to panels) */
+            .mobile-tab {
+                display: flex;
+                position: absolute;
+                top: 50vh;
+                transform: translateY(-50%);
+                background: var(--primary-gradient);
+                color: white;
+                width: 45px;
+                height: 70px;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 1.4rem;
+                box-shadow: var(--shadow);
+                transition: opacity 0.3s;
+            }
+
+            .left-panel .mobile-tab {
+                right: -45px;
+                border-radius: 0 15px 15px 0;
+            }
+            
+            .right-panel .mobile-tab {
+                left: -45px;
+                border-radius: 15px 0 0 15px;
+            }
+
+            /* Ocultar pestañas cuando un panel está abierto */
+            .overlay.active ~ .side-panel:not(.open) .mobile-tab {
+                opacity: 0;
+                pointer-events: none;
+            }
+            .left-panel.open .mobile-tab {
+                opacity: 0;
+                pointer-events: none;
+            }
+            .right-panel.open .mobile-tab {
+                opacity: 0;
+                pointer-events: none;
+            }
         }
 
         .app-card {
             background: var(--card-bg);
             width: 100%;
-            max-width: 550px;
+            max-width: 600px;
             margin: 0 auto;
-            padding: 40px;
-            border-radius: 30px;
+            padding: 25px;
+            border-radius: 20px;
             box-shadow: var(--shadow);
             text-align: center;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%; /* Aprovechar el stretch */
+            overflow-y: auto; /* Scroll interno si es necesario */
         }
 
         .side-panel {
             background: var(--card-bg);
             border-radius: 20px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: var(--shadow);
-            height: 85vh;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
             box-sizing: border-box;
+            height: 100%; /* Toma todo el espacio disponible del grid */
         }
         
         .side-panel::-webkit-scrollbar {
@@ -206,8 +320,8 @@
         }
 
         h1 {
-            font-size: 1.8rem;
-            margin-bottom: 25px;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
             font-weight: 700;
             background: var(--primary-gradient);
             -webkit-background-clip: text;
@@ -216,13 +330,13 @@
 
         .input-group {
             position: relative;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
         textarea {
             width: 100%;
-            height: 160px;
-            padding: 20px;
+            height: 120px;
+            padding: 15px;
             border: 2px solid #f0f0f0;
             border-radius: 20px;
             font-size: 1.1rem;
@@ -307,16 +421,16 @@
 
         .main-btn {
             width: 100%;
-            padding: 18px;
+            padding: 14px;
             border: none;
             border-radius: 15px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: white;
             background: var(--primary-gradient);
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -331,22 +445,22 @@
         .secondary-controls {
             display: grid;
             grid-template-columns: 1fr 1.5fr;
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
         .btn-clear {
             background: var(--danger-gradient);
             color: white;
             border: none;
-            padding: 12px;
+            padding: 10px;
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
         }
 
         select {
-            padding: 12px;
+            padding: 10px;
             border-radius: 12px;
             border: 1px solid #ddd;
             background: #fff;
@@ -357,8 +471,9 @@
         .slider-container {
             text-align: left;
             background: #f8f9fa;
-            padding: 15px;
+            padding: 12px 15px;
             border-radius: 15px;
+            margin-bottom: 10px;
         }
 
         .slider-container label {
