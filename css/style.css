@@ -97,46 +97,41 @@
                 pointer-events: all;
             }
 
-            /* Mobile Tabs (attached to panels) */
+            /* Mobile Tabs (attached to screen edge) */
             .mobile-tab {
                 display: flex;
-                position: absolute;
+                position: fixed;
                 top: 50vh;
                 transform: translateY(-50%);
                 background: var(--primary-gradient);
                 color: white;
-                width: 45px;
-                height: 70px;
+                width: 60px;
+                height: 80px;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
-                font-size: 1.4rem;
-                box-shadow: var(--shadow);
-                transition: opacity 0.3s;
+                font-size: 1.3rem;
+                box-shadow: 0 4px 15px rgba(33, 147, 176, 0.4);
+                transition: opacity 0.3s, transform 0.3s;
+                z-index: 998; /* Debajo del overlay */
             }
 
-            .left-panel .mobile-tab {
-                right: -45px;
-                border-radius: 0 15px 15px 0;
+            .left-tab {
+                left: 0;
+                border-radius: 0 20px 20px 0;
             }
             
-            .right-panel .mobile-tab {
-                left: -45px;
-                border-radius: 15px 0 0 15px;
+            .right-tab {
+                right: 0;
+                border-radius: 20px 0 0 20px;
             }
 
             /* Ocultar pestañas cuando un panel está abierto */
-            .overlay.active ~ .side-panel:not(.open) .mobile-tab {
+            .overlay.active + .mobile-tab,
+            .overlay.active ~ .mobile-tab {
                 opacity: 0;
                 pointer-events: none;
-            }
-            .left-panel.open .mobile-tab {
-                opacity: 0;
-                pointer-events: none;
-            }
-            .right-panel.open .mobile-tab {
-                opacity: 0;
-                pointer-events: none;
+                transform: translateY(-50%) scale(0.8);
             }
         }
 
