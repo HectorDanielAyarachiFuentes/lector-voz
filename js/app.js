@@ -115,6 +115,7 @@
                             if (visualizer) visualizer.classList.remove('active');
                             totalSentencesToSpeak = 0;
                             sentencesFinished = 0;
+                            document.querySelectorAll('.active-speaking').forEach(b => b.classList.remove('active-speaking'));
                         }
                     };
                     
@@ -134,6 +135,7 @@
             if (visualizer) visualizer.classList.remove('active');
             totalSentencesToSpeak = 0;
             sentencesFinished = 0;
+            document.querySelectorAll('.active-speaking').forEach(b => b.classList.remove('active-speaking'));
         }
 
         function applyPunctuation(type) {
@@ -203,9 +205,12 @@
                 const div = document.createElement('div');
                 div.className = 'history-item';
                 div.textContent = msg;
-                div.title = "Haz clic para copiar al texto";
+                div.title = "Haz clic para reproducir";
                 div.onclick = () => {
                     textInput.value = msg;
+                    document.querySelectorAll('.active-speaking').forEach(b => b.classList.remove('active-speaking'));
+                    div.classList.add('active-speaking');
+                    speak();
                 };
                 historyList.appendChild(div);
             });
@@ -276,6 +281,8 @@
                 btn.textContent = msg;
                 btn.onclick = () => {
                     textInput.value = msg;
+                    document.querySelectorAll('.active-speaking').forEach(b => b.classList.remove('active-speaking'));
+                    btn.classList.add('active-speaking');
                     speak(); 
                 };
 
