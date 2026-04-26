@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VozInteractiva Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #eef2f7;
+            --card-bg: #ffffff;
+            --primary-gradient: linear-gradient(135deg, #6dd5ed, #2193b0);
+            --danger-gradient: linear-gradient(135deg, #ff5f6d, #ffc371);
+            --text-main: #2c3e50;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .app-card {
+            background: var(--card-bg);
+            width: 90%;
+            max-width: 550px;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 160px;
+            padding: 20px;
+            border: 2px solid #f0f0f0;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            resize: none;
+            box-sizing: border-box;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #2193b0;
+            background: #fff;
+            box-shadow: 0 0 15px rgba(33, 147, 176, 0.1);
+        }
+
+        .main-btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            background: var(--primary-gradient);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .main-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 147, 176, 0.3);
+        }
+
+        .secondary-controls {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .btn-clear {
+            background: var(--danger-gradient);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        select {
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            background: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .slider-container {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .slider-container label {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: #2193b0;
+        }
+
+        .footer-info {
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: #bdc3c7;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-card">
+    <h1><i class="fas fa-comment-dots"></i> Mijarra Voz</h1>
+    
+    <div class="input-group">
+        <textarea id="text-input" placeholder="Escribe aquí lo que quieres decir..."></textarea>
+    </div>
+
+    <button class="main-btn" onclick="speak()">
+        <i class="fas fa-volume-up"></i> Reproducir Voz
+    </button>
+
+    <div class="secondary-controls">
+        <button class="btn-clear" onclick="clearText()">
+            <i class="fas fa-trash-alt"></i> Borrar
+        </button>
+        <select id="voice-select">
+            <option value="">Cargando voces...</option>
+        </select>
+    </div>
+
+    <div class="slider-container">
+        <label><i class="fas fa-tachometer-alt"></i> Velocidad de lectura</label>
+        <input type="range" id="rate" min="0.5" max="1.8" value="1" step="0.1">
+    </div>
+
+    <p class="footer-info">Presiona Enter para hablar rápido</p>
+</div>
+
+<script>
+    const synth = window.speechSynthesis;
+    const textInput = document.getElementById('text-input');
+    const voiceSelect = document.getElementById('voice-select');
+    const rateInput = document.getElementById('rate');
+
+    let voices = [];
+
+    function loadVoices() {
+        voices = synth.getVoices();
+        voiceSelect.innerHTML = '';
+        
+        // Filtramos para mostrar voces en español primero
+        const spanishVoices = voices.filter(v => v.lang.includes('es'));
+        
+        spanishVoices.forEach(voice => {
+            const option = document.createElement('option');
+            option.textContent = `${voice.name.replace('Microsoft', '').split(' - ')[0]} (${voice.lang})`;
+            option.value = voice.name;
+            voiceSelect.appendChild(option);
+        });
+
+        if(spanishVoices.length === 0) {
+            const option = document.createElement('option');
+            option.textContent = "No se hallaron voces en español";
+            voiceSelect.appendChild(option);
+        }
+    }
+
+    // Inicializar voces
+    loadVoices();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    function speak() {
+        if (synth.speaking) { synth.cancel(); } // Si ya está hablando, reinicia
+        if (textInput.value.trim() !== '') {
+            const utterance = new SpeechSynthesisUtterance(textInput.value);
+            const selectedVoice = voices.find(v => v.name === voiceSelect.value);
+            
+            utterance.voice = selectedVoice;
+            utterance.rate = rateInput.value;
+            utterance.pitch = 1;
+
+            synth.speak(utterance);
+        }
+    }
+
+    function clearText() {
+        textInput.value = '';
+        synth.cancel();
+    }
+
+    // Evento de teclado
+    textInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            speak();
+        }
+    });
+</script>
+
+</body>
+</html>
