@@ -234,36 +234,37 @@
             margin-top: 30px;
         }
 
-        .edit-mode-btn {
-            position: absolute;
-            right: 0;
-            top: 0;
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header-btn {
             background: none;
             border: none;
             color: #bdc3c7;
             cursor: pointer;
-            font-size: 1.1rem;
-            transition: color 0.2s;
-            padding: 2px 5px;
+            font-size: 1.2rem;
+            transition: color 0.2s, transform 0.2s;
+            padding: 0;
         }
 
-        .edit-mode-btn:hover, .edit-mode-btn.active {
+        .header-btn:hover {
+            color: #2193b0;
+            transform: scale(1.1);
+        }
+
+        .header-btn.active {
             color: #2193b0;
         }
 
-        .add-predefined {
-            display: none;
-            gap: 10px;
-            margin-top: auto;
-            padding-top: 15px;
-            border-top: 2px solid #eef2f7;
-            position: sticky;
-            bottom: 0;
-            background: var(--card-bg);
+        .header-btn.add-btn {
+            color: #2193b0; /* Darle un poco más de prominencia al de agregar */
         }
-
-        .left-panel.edit-mode .add-predefined {
-            display: flex;
+        
+        .header-btn.add-btn:hover {
+            color: #1a748c;
         }
 
         .delete-btn {
@@ -286,33 +287,119 @@
             border-color: #ff5f6d;
         }
 
-        .add-predefined input {
-            flex: 1;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            font-size: 0.9rem;
+        /* --- Modal Styles --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-card h3 {
+            margin-top: 0;
+            color: var(--text-main);
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .modal-card h3 i {
+            color: #2193b0;
+        }
+
+        .modal-card p {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .modal-card input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eef2f7;
+            border-radius: 12px;
+            font-size: 1rem;
             outline: none;
-            transition: border-color 0.2s;
+            box-sizing: border-box;
+            background: #fafafa;
+            margin-bottom: 25px;
+            transition: border-color 0.3s;
         }
 
-        .add-predefined input:focus {
+        .modal-card input:focus {
             border-color: #2193b0;
+            background: #fff;
         }
 
-        .add-predefined button {
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .modal-buttons button {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .btn-cancel {
+            background: #f1f3f5;
+            color: #495057;
+        }
+
+        .btn-cancel:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .btn-save {
             background: var(--primary-gradient);
             color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(33, 147, 176, 0.3);
         }
-        
-        .add-predefined button:hover {
+
+        .btn-save:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(33, 147, 176, 0.2);
+            box-shadow: 0 6px 15px rgba(33, 147, 176, 0.4);
         }
 
         h1 {

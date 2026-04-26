@@ -28,15 +28,14 @@
     </div>
 
     <div class="side-panel left-panel" id="left-panel">
-        <h2>
-            <i class="fas fa-list-ul"></i> Predefinidos
-            <button id="edit-mode-btn" class="edit-mode-btn" onclick="toggleEditMode()" title="Editar mensajes"><i class="fas fa-edit"></i></button>
+        <h2 style="display: flex; justify-content: space-between; align-items: center;">
+            <span><i class="fas fa-list-ul"></i> Predefinidos</span>
+            <div class="header-actions">
+                <button class="header-btn add-btn" onclick="openAddModal()" title="Agregar nuevo mensaje"><i class="fas fa-plus"></i></button>
+                <button id="edit-mode-btn" class="header-btn" onclick="toggleEditMode()" title="Editar mensajes"><i class="fas fa-edit"></i></button>
+            </div>
         </h2>
         <div id="predefined-list" style="flex: 1;"></div>
-        <div class="add-predefined">
-            <input type="text" id="new-predefined-input" placeholder="Nuevo mensaje...">
-            <button onclick="addPredefined()" title="Agregar nuevo mensaje"><i class="fas fa-plus"></i></button>
-        </div>
     </div>
 
     <div class="app-card">
@@ -85,6 +84,19 @@
         <h2><i class="fas fa-history"></i> Historial</h2>
         <div id="history-list">
             <div class="empty-history">Aún no hay mensajes.</div>
+        </div>
+    </div>
+
+    <!-- Modal para añadir nuevo mensaje -->
+    <div id="add-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3><i class="fas fa-plus-circle"></i> Nuevo Mensaje</h3>
+            <p>Escribe el mensaje que usarás frecuentemente.</p>
+            <input type="text" id="new-predefined-input" placeholder="E.g. ¿Dónde está el baño?" onkeypress="if(event.key === 'Enter') { addPredefined(); }">
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
+                <button class="btn-save" onclick="addPredefined()">Añadir</button>
+            </div>
         </div>
     </div>
 

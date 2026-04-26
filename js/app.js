@@ -299,7 +299,26 @@
                 predefinedMessages.push(val);
                 input.value = '';
                 renderPredefined();
+                closeAddModal();
+                
+                // Hacer scroll al fondo de la lista
+                setTimeout(() => {
+                    const list = document.getElementById('predefined-list');
+                    list.scrollTop = list.scrollHeight;
+                }, 100);
             }
+        }
+
+        function openAddModal() {
+            document.getElementById('add-modal').classList.add('active');
+            setTimeout(() => {
+                document.getElementById('new-predefined-input').focus();
+            }, 100);
+        }
+
+        function closeAddModal() {
+            document.getElementById('add-modal').classList.remove('active');
+            document.getElementById('new-predefined-input').value = '';
         }
 
         function removePredefined(index) {
