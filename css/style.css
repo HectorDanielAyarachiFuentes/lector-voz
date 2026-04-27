@@ -728,8 +728,12 @@
             height: 70px;
             object-fit: contain;
             margin-bottom: 8px;
-            border-radius: 10px;
-            background: #f8f9fa;
+            border-radius: 12px;
+            background: #fff; /* Fondo blanco siempre para el pictograma */
+            padding: 5px;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
         }
 
         .kids-grid-item span {
@@ -766,6 +770,7 @@
         body.aac-active .kids-grid-item img {
             width: 90px;
             height: 90px;
+            padding: 8px;
         }
 
         body.aac-active .kids-grid-item span {
@@ -874,10 +879,36 @@
             --danger-gradient: linear-gradient(135deg, #870000, #190a05);
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
-        body.theme-dark textarea, body.theme-dark input, body.theme-dark .message-btn, body.theme-dark .history-item {
+        body.theme-dark textarea, 
+        body.theme-dark input, 
+        body.theme-dark .message-btn, 
+        body.theme-dark .history-item,
+        body.theme-dark .punct-btn,
+        body.theme-dark select,
+        body.theme-dark .slider-container,
+        body.theme-dark .kids-toggle-btn,
+        body.theme-dark .kids-grid-item {
             background: #2c2c2c;
             color: #e0e0e0;
             border-color: #444;
+        }
+
+        body.theme-dark .punct-btn:hover,
+        body.theme-dark .kids-toggle-btn:hover,
+        body.theme-dark .kids-grid-item:hover {
+            background: #3d3d3d;
+            border-color: #99f2c8;
+            color: #99f2c8;
+        }
+
+        body.theme-dark .kids-toggle-btn.active {
+            background: var(--primary-gradient);
+            color: #121212;
+            border-color: transparent;
+        }
+
+        body.theme-dark .kids-toggle-btn.active * {
+            color: #121212 !important;
         }
 
         body.theme-dark .header-btn {
@@ -889,6 +920,22 @@
             background: rgba(255, 255, 255, 0.1);
             color: #99f2c8;
             border-color: rgba(153, 242, 200, 0.2);
+        }
+
+        body.theme-dark .slider-container label,
+        body.theme-dark .footer-info,
+        body.theme-dark .modal-card p {
+            color: #a0a0a0;
+        }
+
+        body.theme-dark .kids-grid-item span {
+            color: #e0e0e0;
+        }
+
+        body.theme-dark .kids-grid-item img {
+            background: #ffffff; /* Forzar fondo blanco para pictos transparentes */
+            border-color: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
         }
 
         body.theme-hc-yellow {
