@@ -65,10 +65,15 @@
 
     <div class="app-card">
         <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h1 id="main-title" style="margin-bottom: 0; cursor: pointer; user-select: none; touch-action: manipulation;" title="Mantén presionado para Accesibilidad"><i class="fas fa-comment-dots"></i> Voz</h1>
-            <button id="kids-mode-toggle" class="kids-toggle-btn" onclick="toggleKidsMode()" title="Cambiar a Modo AAC (Comunicación Aumentativa y Alternativa)">
-                <i class="fas fa-th"></i> Modo AAC
-            </button>
+            <h1 id="main-title" style="margin-bottom: 0;"><i class="fas fa-comment-dots"></i> Voz</h1>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button onclick="openAccessibilityModal()" title="Opciones de Accesibilidad" class="kids-toggle-btn" style="padding: 8px 12px;">
+                    <i class="fas fa-universal-access"></i>
+                </button>
+                <button id="kids-mode-toggle" class="kids-toggle-btn" onclick="toggleKidsMode()" title="Cambiar a Modo AAC (Comunicación Aumentativa y Alternativa)">
+                    <i class="fas fa-th"></i> Modo AAC
+                </button>
+            </div>
         </div>
 
         <!-- CONTENEDOR MODO CLÁSICO -->
