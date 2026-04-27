@@ -800,11 +800,9 @@
         /* Botones de tamaño de fuente en el modal: iguales, sin desborde */
         html.font-large #accessibility-modal .punct-btn,
         html.font-xlarge #accessibility-modal .punct-btn {
-            font-size: 13px; /* Un poco más pequeño para asegurar espacio */
-            flex: 1;
-            min-width: 0;
-            white-space: nowrap;
+            font-size: 12px;
             padding: 8px 4px;
+            white-space: nowrap;
         }
 
         /* Botón Cerrar: tamaño fijo */
