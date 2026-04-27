@@ -46,7 +46,10 @@ function renderHistory() {
         infoP.style.color     = '#7f8c8d';
         infoP.style.marginBottom = '6px';
         infoP.style.lineHeight   = '1.3';
-        infoP.innerHTML = `<i class="far fa-clock"></i> Este mensaje fue dicho el ${item.date} a las ${item.time} y esto se dijo:`;
+        const clockIcon = document.createElement('i');
+        clockIcon.className = 'far fa-clock';
+        infoP.appendChild(clockIcon);
+        infoP.appendChild(document.createTextNode(` Este mensaje fue dicho el ${item.date} a las ${item.time} y esto se dijo:`));
 
         // Contenedor: texto + ícono de reproducción
         const textContainer               = document.createElement('div');

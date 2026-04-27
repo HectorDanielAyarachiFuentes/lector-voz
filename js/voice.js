@@ -57,6 +57,14 @@ if (speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = loadVoices;
 }
 
+// Fallback/Reintento para navegadores móviles donde onvoiceschanged puede fallar
+setTimeout(() => {
+    if (voices.length === 0) {
+        console.warn("Reintentando carga de voces...");
+        loadVoices();
+    }
+}, 1000);
+
 /* ─── Función principal de habla ─────────────────────────────── */
 function speak() {
     const visualizer = document.getElementById('visualizer');
