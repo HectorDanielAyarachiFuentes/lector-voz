@@ -865,9 +865,11 @@
         }
         body.theme-hc-yellow .main-btn, 
         body.theme-hc-yellow .btn-save,
+        body.theme-hc-yellow .mobile-tab,
         body.theme-hc-yellow .kids-toggle-btn.active {
             background: #ffff00 !important;
             color: #000000 !important;
+            box-shadow: 0 0 20px rgba(255, 255, 0, 0.4) !important;
         }
         body.theme-hc-yellow .app-card,
         body.theme-hc-yellow .side-panel,
@@ -886,6 +888,7 @@
         /* Corregir color de iconos en botones invertidos */
         body.theme-hc-yellow .main-btn *, 
         body.theme-hc-yellow .btn-save *,
+        body.theme-hc-yellow .mobile-tab *,
         body.theme-hc-yellow .kids-toggle-btn.active * {
             color: #000000 !important;
             -webkit-text-fill-color: initial !important;
@@ -906,9 +909,11 @@
         }
         body.theme-hc-white .main-btn, 
         body.theme-hc-white .btn-save,
+        body.theme-hc-white .mobile-tab,
         body.theme-hc-white .kids-toggle-btn.active {
             background: #ffffff !important;
             color: #000000 !important;
+            box-shadow: 0 0 20px rgba(255, 255, 1, 0.4) !important;
         }
         body.theme-hc-white .app-card,
         body.theme-hc-white .side-panel,
@@ -927,6 +932,7 @@
         /* Corregir color de iconos en botones invertidos */
         body.theme-hc-white .main-btn *, 
         body.theme-hc-white .btn-save *,
+        body.theme-hc-white .mobile-tab *,
         body.theme-hc-white .kids-toggle-btn.active * {
             color: #000000 !important;
             -webkit-text-fill-color: initial !important;
