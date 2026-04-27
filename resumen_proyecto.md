@@ -37,11 +37,15 @@ Construimos un robusto sistema de comunicación alternativa para usuarios no ver
 
 Hemos documentado la aplicación interactuando de forma fluida tanto en entorno de **Escritorio** como en su diseño **Móvil responsivo** (menú lateral, botones accesibles). A continuación puedes ver el recorrido funcional:
 
-````carousel
-![Demostración en Vivo (Versión de Escritorio)](file:///C:/Users/Ramoncito/.gemini/antigravity/brain/bccbe07e-cbbf-4563-9da2-1d786a4f2842/desktop_version_1777299529702.webp)
-<!-- slide -->
-![Demostración en Vivo (Versión Móvil y Menú Off-Canvas)](file:///C:/Users/Ramoncito/.gemini/antigravity/brain/bccbe07e-cbbf-4563-9da2-1d786a4f2842/mobile_version_1777299684735.webp)
-````
+### Versión de Escritorio / Tablet
+![Captura de Escritorio](./img%20md/desktop.png)
+
+*(Animación del uso en escritorio: [Ver Video](./img%20md/desktop_demo.webp))*
+
+### Versión Móvil
+![Captura Móvil](./img%20md/mobile.png)
+
+*(Animación del uso en móvil: [Ver Video](./img%20md/mobile_demo.webp))*
 
 > [!NOTE]
 > La aplicación está diseñada bajo el principio "Mobile-First", asegurando que botones como "Reproducir" o la lista de Pictogramas tengan un área táctil óptima para dispositivos móviles y tablets.
