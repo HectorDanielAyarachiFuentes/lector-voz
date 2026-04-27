@@ -80,5 +80,73 @@ document.addEventListener('touchstart', e => {
 document.addEventListener('touchend', e => {
     if (e.target.tagName.toLowerCase() === 'input' && e.target.type === 'range') return;
     touchendX = e.changedTouches[0].screenX;
-    if (window.innerWidth <= 950) checkDirection();
 });
+
+/* ─── Accesibilidad y Alto Contraste (Long Press) ────────────── */
+let pressTimer;
+const mainTitle = document.getElementById('main-title');
+const accessibilityModal = document.getElementById('accessibility-modal');
+const themeSelect = document.getElementById('theme-select');
+
+// Recuperar preferencias al cargar
+window.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('voz_theme') || 'normal';
+    const savedFontSize = localStorage.getItem('voz_fontSize') || 'normal';
+    
+    setTheme(savedTheme);
+    setFontSize(savedFontSize);
+    if(themeSelect) themeSelect.value = savedTheme;
+});
+
+function setTheme(theme) {
+    document.body.classList.remove('theme-dark', 'theme-hc-yellow', 'theme-hc-white');
+    if (theme !== 'normal') {
+        document.body.classList.add(`theme-${theme}`);
+    }
+    localStorage.setItem('voz_theme', theme);
+}
+
+function setFontSize(size) {
+    document.documentElement.classList.remove('font-large', 'font-xlarge');
+    if (size !== 'normal') {
+        document.documentElement.classList.add(`font-${size}`);
+    }
+    localStorage.setItem('voz_fontSize', size);
+}
+
+function openAccessibilityModal() {
+    accessibilityModal.classList.add('active');
+    
+    // Feedback vibratorio si está soportado
+    if (navigator.vibrate) {
+        navigator.vibrate(50);
+    }
+}
+
+function closeAccessibilityModal() {
+    accessibilityModal.classList.remove('active');
+}
+
+// Lógica de "Mantener Presionado" (Long Press)
+if (mainTitle) {
+    const startPress = (e) => {
+        // Ignorar clic derecho
+        if (e.type === 'mousedown' && e.button !== 0) return; 
+        
+        pressTimer = setTimeout(() => {
+            openAccessibilityModal();
+        }, 800); // 800ms para considerar un long press
+    };
+
+    const cancelPress = () => {
+        clearTimeout(pressTimer);
+    };
+
+    mainTitle.addEventListener('mousedown', startPress);
+    mainTitle.addEventListener('touchstart', startPress, {passive: true});
+    
+    mainTitle.addEventListener('mouseup', cancelPress);
+    mainTitle.addEventListener('mouseleave', cancelPress);
+    mainTitle.addEventListener('touchend', cancelPress);
+    mainTitle.addEventListener('touchcancel', cancelPress);
+}

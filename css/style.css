@@ -773,4 +773,105 @@
             }
         }
 
+        /* ─── TEMAS DE ACCESIBILIDAD Y ALTO CONTRASTE ─────────────── */
+
+        html.font-large { font-size: 18px; }
+        html.font-xlarge { font-size: 22px; }
+
+        body.theme-dark {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #e0e0e0;
+            --primary-gradient: linear-gradient(135deg, #1f4037, #99f2c8);
+            --danger-gradient: linear-gradient(135deg, #870000, #190a05);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        body.theme-dark textarea, body.theme-dark input, body.theme-dark .message-btn, body.theme-dark .history-item {
+            background: #2c2c2c;
+            color: #e0e0e0;
+            border-color: #444;
+        }
+
+        body.theme-hc-yellow {
+            --bg-color: #000000;
+            --card-bg: #000000;
+            --text-main: #ffff00;
+            --primary-gradient: none;
+            --danger-gradient: none;
+            --shadow: none;
+        }
+        body.theme-hc-yellow * {
+            color: #ffff00 !important;
+            border-color: #ffff00 !important;
+            -webkit-text-fill-color: initial !important;
+        }
+        body.theme-hc-yellow .main-btn, 
+        body.theme-hc-yellow .btn-save,
+        body.theme-hc-yellow .kids-toggle-btn.active {
+            background: #ffff00 !important;
+            color: #000000 !important;
+        }
+        body.theme-hc-yellow .app-card,
+        body.theme-hc-yellow .side-panel,
+        body.theme-hc-yellow textarea,
+        body.theme-hc-yellow input,
+        body.theme-hc-yellow select,
+        body.theme-hc-yellow button,
+        body.theme-hc-yellow .modal-card,
+        body.theme-hc-yellow .slider-container,
+        body.theme-hc-yellow .message-btn,
+        body.theme-hc-yellow .history-item,
+        body.theme-hc-yellow .kids-grid-item {
+            background: #000000 !important;
+            border: 2px solid #ffff00 !important;
+        }
+        /* Corregir color de iconos en botones invertidos */
+        body.theme-hc-yellow .main-btn *, 
+        body.theme-hc-yellow .btn-save *,
+        body.theme-hc-yellow .kids-toggle-btn.active * {
+            color: #000000 !important;
+            -webkit-text-fill-color: initial !important;
+        }
+
+        body.theme-hc-white {
+            --bg-color: #000000;
+            --card-bg: #000000;
+            --text-main: #ffffff;
+            --primary-gradient: none;
+            --danger-gradient: none;
+            --shadow: none;
+        }
+        body.theme-hc-white * {
+            color: #ffffff !important;
+            border-color: #ffffff !important;
+            -webkit-text-fill-color: initial !important;
+        }
+        body.theme-hc-white .main-btn, 
+        body.theme-hc-white .btn-save,
+        body.theme-hc-white .kids-toggle-btn.active {
+            background: #ffffff !important;
+            color: #000000 !important;
+        }
+        body.theme-hc-white .app-card,
+        body.theme-hc-white .side-panel,
+        body.theme-hc-white textarea,
+        body.theme-hc-white input,
+        body.theme-hc-white select,
+        body.theme-hc-white button,
+        body.theme-hc-white .modal-card,
+        body.theme-hc-white .slider-container,
+        body.theme-hc-white .message-btn,
+        body.theme-hc-white .history-item,
+        body.theme-hc-white .kids-grid-item {
+            background: #000000 !important;
+            border: 2px solid #ffffff !important;
+        }
+        /* Corregir color de iconos en botones invertidos */
+        body.theme-hc-white .main-btn *, 
+        body.theme-hc-white .btn-save *,
+        body.theme-hc-white .kids-toggle-btn.active * {
+            color: #000000 !important;
+            -webkit-text-fill-color: initial !important;
+        }
+
 

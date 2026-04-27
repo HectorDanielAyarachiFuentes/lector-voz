@@ -65,7 +65,7 @@
 
     <div class="app-card">
         <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h1 style="margin-bottom: 0;"><i class="fas fa-comment-dots"></i> Voz</h1>
+            <h1 id="main-title" style="margin-bottom: 0; cursor: pointer; user-select: none; touch-action: manipulation;" title="Mantén presionado para Accesibilidad"><i class="fas fa-comment-dots"></i> Voz</h1>
             <button id="kids-mode-toggle" class="kids-toggle-btn" onclick="toggleKidsMode()" title="Cambiar a Modo AAC (Comunicación Aumentativa y Alternativa)">
                 <i class="fas fa-th"></i> Modo AAC
             </button>
@@ -138,6 +138,37 @@
             <div class="modal-buttons">
                 <button class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
                 <button class="btn-save" onclick="addPredefined()">Añadir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Accesibilidad (Alto Contraste) -->
+    <div id="accessibility-modal" class="modal-overlay">
+        <div class="modal-card">
+            <h3><i class="fas fa-universal-access"></i> Accesibilidad</h3>
+            <p>Configura el contraste y tamaño de letra.</p>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="font-weight: bold; display: block; margin-bottom: 8px;">Tema y Contraste</label>
+                <select id="theme-select" style="width: 100%; margin-bottom: 10px;" onchange="setTheme(this.value)">
+                    <option value="normal">Estándar (Claro)</option>
+                    <option value="dark">Modo Oscuro</option>
+                    <option value="hc-yellow">Alto Contraste (Amarillo / Negro)</option>
+                    <option value="hc-white">Alto Contraste (Blanco / Negro)</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="font-weight: bold; display: block; margin-bottom: 8px;">Tamaño de Letra</label>
+                <div style="display: flex; gap: 10px;">
+                    <button class="punct-btn" onclick="setFontSize('normal')" style="flex: 1; justify-content: center;">A (Normal)</button>
+                    <button class="punct-btn" onclick="setFontSize('large')" style="flex: 1; justify-content: center;">A+ (Grande)</button>
+                    <button class="punct-btn" onclick="setFontSize('xlarge')" style="flex: 1; justify-content: center;">A++ (Muy Grande)</button>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeAccessibilityModal()">Cerrar</button>
             </div>
         </div>
     </div>
