@@ -778,6 +778,66 @@
         html.font-large { font-size: 18px; }
         html.font-xlarge { font-size: 22px; }
 
+        /* ─── Correcciones de layout en modos de fuente grande ────── */
+
+        /* TODO el modal de accesibilidad queda anclado a 16px: no escala */
+        html.font-large #accessibility-modal .modal-card,
+        html.font-xlarge #accessibility-modal .modal-card {
+            font-size: 16px;
+        }
+
+        html.font-large #accessibility-modal .modal-card *,
+        html.font-xlarge #accessibility-modal .modal-card * {
+            font-size: inherit;
+        }
+
+        /* Título del modal: tamaño fijo en PX */
+        html.font-large #accessibility-modal h3,
+        html.font-xlarge #accessibility-modal h3 {
+            font-size: 18px;
+        }
+
+        /* Botones de tamaño de fuente en el modal: iguales, sin desborde */
+        html.font-large #accessibility-modal .punct-btn,
+        html.font-xlarge #accessibility-modal .punct-btn {
+            font-size: 13px; /* Un poco más pequeño para asegurar espacio */
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            padding: 8px 4px;
+        }
+
+        /* Botón Cerrar: tamaño fijo */
+        html.font-large #accessibility-modal .btn-cancel,
+        html.font-xlarge #accessibility-modal .btn-cancel {
+            font-size: 14px;
+            padding: 10px 18px;
+        }
+
+        /* Selector de tema: tamaño fijo */
+        html.font-large #accessibility-modal select,
+        html.font-xlarge #accessibility-modal select {
+            font-size: 14px;
+            padding: 8px;
+        }
+
+        /* Cabecera del panel lateral: tamaño fijo en PX para evitar que los iconos se encimen */
+        html.font-large .side-panel h2,
+        html.font-xlarge .side-panel h2 {
+            font-size: 16px;
+            white-space: nowrap;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Botones de acciones en la cabecera (+, editar): tamaño fijo */
+        html.font-large .header-btn,
+        html.font-xlarge .header-btn {
+            font-size: 16px;
+        }
+
         body.theme-dark {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
